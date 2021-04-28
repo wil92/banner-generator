@@ -1,7 +1,14 @@
 :host {
   .container {
-    canvas {
+    width: 100vw;
+    height: 100vh;
 
+    .content {
+
+
+      canvas {
+        border: .5px solid black;
+      }
     }
   }
 }

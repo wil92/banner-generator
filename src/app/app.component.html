@@ -1,6 +1,32 @@
-<div class="container">
+<div class="container"
+     fxLayout="row"
+     fxLayoutAlign="center center">
 
-  init page
-  <canvas></canvas>
+  <div class="content"
+       fxLayout="column"
+       fxLayoutAlign="center center">
+    <form [formGroup]="form"
+          fxLayout="row wrap">
+      <div fxLayout="column">
+        <label for="width">width</label>
+        <input type="text"
+               id="width"
+               formControlName="width"
+               (keypress)="valueChange()"
+               placeholder="width">
+      </div>
+      <div fxLayout="column">
+        <label for="height">height</label>
+        <input type="text"
+               id="height"
+               formControlName="height"
+               (keypress)="valueChange()"
+               placeholder="height">
+      </div>
+    </form>
+
+    <canvas [width]="widthValue"
+            [height]="heightValue"></canvas>
+  </div>
 
 </div>
