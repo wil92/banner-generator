@@ -1,6 +1,8 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {init} from 'protractor/built/launcher';
+
+import {TextObject} from './draw-objects/text-object';
+import {drawText} from './draw-text';
 
 @Component({
   selector: 'app-root',
@@ -15,6 +17,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   TITLE_PADDING = 10;
   TITLE_RANDOM_PADDING = 20;
   DEFAULT_TITLE = 'Initial title';
+  textList: TextObject[] = [];
+
+  isTextDrag = false;
+  mousePrevPosX = null;
+  mousePrevPosY = null;
+  objectSelected = 0;
 
   form = new FormGroup({
     width: new FormControl('', [Validators.required]),
@@ -34,19 +42,24 @@ export class AppComponent implements OnInit, AfterViewInit {
   constructor() {
   }
 
-  ngAfterViewInit(): void {
-    // Load canvas context
-    this.context = this.bannerCanvas.nativeElement.getContext('2d');
-
-    this.render();
-  }
-
   ngOnInit(): void {
     this.form.controls.width.setValue(this.DEFAULT_WIDTH);
     this.form.controls.height.setValue(this.DEFAULT_HEIGHT);
     this.form.controls.title.setValue(this.DEFAULT_TITLE);
     this.form.controls.titleBackgroundColor.setValue('#f00');
     this.form.controls.titleTextColor.setValue('#000');
+
+    this.textList.push(new TextObject(
+      this.DEFAULT_TITLE, 0, this.DEFAULT_HEIGHT, 30, '#000',
+      '#f00', this.TITLE_PADDING, this.TITLE_RANDOM_PADDING));
+  }
+
+  ngAfterViewInit(): void {
+    // Load canvas context
+    this.context = this.bannerCanvas.nativeElement.getContext('2d');
+
+    // first render
+    this.render();
   }
 
   updateParametersValues(): void {
@@ -59,45 +72,19 @@ export class AppComponent implements OnInit, AfterViewInit {
   render(): void {
     this.cleanUpBoard();
     this.drawBackground();
-    this.renderTitle();
+
+    this.updateTextValue();
+
+    for (const textObj of this.textList) {
+      textObj.render(this.context);
+    }
   }
 
-  renderTitle(): void {
-    const title = this.form.controls.title.value;
-    // toDo 02.05.21: research about this
-    const textSize = 30;
-
-    this.context.font = `${textSize}px Arial`;
-    const titleWidth = this.context.measureText(title).width;
-    const titleHeight = textSize;
-    const newTextPositionX = this.widthValue / 2 - titleWidth / 2;
-    const newTextPositionY = this.heightValue / 2;
-
-    const titleBackgroundColor = this.form.controls.titleBackgroundColor.value;
-    this.drawTitleContainer(newTextPositionX, newTextPositionY, titleWidth, titleHeight, titleBackgroundColor);
-
-    const titleTextColor = this.form.controls.titleTextColor.value;
-    this.drawText(this.form.controls.title.value, titleTextColor, newTextPositionX, newTextPositionY, textSize);
-  }
-
-  drawTitleContainer(initX: number, initY: number, width: number, height: number, color: string): void {
-    initX -= this.TITLE_PADDING;
-    initY += this.TITLE_PADDING;
-
-    const dx00 = Math.random() * this.TITLE_RANDOM_PADDING, dx01 = Math.random() * this.TITLE_RANDOM_PADDING,
-      dx02 = Math.random() * this.TITLE_RANDOM_PADDING, dx03 = Math.random() * this.TITLE_RANDOM_PADDING;
-    const dy00 = Math.random() * this.TITLE_RANDOM_PADDING, dy01 = Math.random() * this.TITLE_RANDOM_PADDING,
-      dy02 = Math.random() * this.TITLE_RANDOM_PADDING, dy03 = Math.random() * this.TITLE_RANDOM_PADDING;
-
-    this.context.beginPath();
-    this.context.moveTo(initX - dx00, initY + dy00);
-    this.context.lineTo(initX + width + this.TITLE_PADDING * 2 + dx01, initY + dy01);
-    this.context.lineTo(initX + width + this.TITLE_PADDING * 2 + dx02, initY - height - this.TITLE_PADDING * 2 - dy02);
-    this.context.lineTo(initX - dx03, initY - height  - this.TITLE_PADDING * 2 - dy03);
-    this.context.lineTo(initX - dx00, initY + dy00);
-    this.context.closePath();
-    this.context.fillStyle = color;
-    this.context.fill();
+  updateTextValue(): void {
+    // toDo 02.05.21: at the moment is only one text
+    this.textList[0].text = this.form.controls.title.value;
+    this.textList[0].color = this.form.controls.titleTextColor.value;
+    this.textList[0].background = this.form.controls.titleBackgroundColor.value;
   }
 
   cleanUpBoard(): void {
@@ -124,7 +111,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       const numberOfLetters = Math.ceil(Math.random() * maxNumberOfLetters);
       for (let j = 0; j < numberOfLetters; j++) {
         if (j + 1 < numberOfLetters) {
-          // this.drawText(this.getRandomLetter(), textColor, (letterWidth + columnsPadding) * i, textSize * (j + 1), textSize);
           this.blurLetter((letterWidth + columnsPadding) * i, textSize * (j + 1), textColor, textSize, 2);
         } else {
           this.blurLetter((letterWidth + columnsPadding) * i, textSize * (j + 1), textMainColor, textSize, 4);
@@ -147,13 +133,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.context.globalAlpha = 0.1;
     const offset = 1;
     for (let i = 0; i < intensity; i++) {
-      this.drawText(this.getRandomLetter(), color, x - offset, y - offset, size);
-      this.drawText(this.getRandomLetter(), color, x - offset, y + offset, size);
-      this.drawText(this.getRandomLetter(), color, x + offset, y - offset, size);
-      this.drawText(this.getRandomLetter(), color, x + offset, y + offset, size);
+      drawText(this.context, this.getRandomLetter(), color, x - offset, y - offset, size);
+      drawText(this.context, this.getRandomLetter(), color, x - offset, y + offset, size);
+      drawText(this.context, this.getRandomLetter(), color, x + offset, y - offset, size);
+      drawText(this.context, this.getRandomLetter(), color, x + offset, y + offset, size);
     }
     this.context.globalAlpha = 1;
-    this.drawText(this.getRandomLetter(), color, x, y, size);
+    drawText(this.context, this.getRandomLetter(), color, x, y, size);
   }
 
   getRandomLetter(): string {
@@ -161,10 +147,38 @@ export class AppComponent implements OnInit, AfterViewInit {
     return characters[Math.floor(Math.random() * characters.length)];
   }
 
-  drawText(text: string, color: string, x: number, y: number, textSize: number): void {
-    this.context.font = `${textSize}px Arial`;
-    this.context.fillStyle = color;
-    this.context.fillText(text, x, y);
+  onClickDown(event): void {
+    const positionX = event.offsetX;
+    const positionY = event.offsetY;
+    for (let i = 0; i < this.textList.length; i++) {
+      if (this.textList[i].insidePoint(positionX, positionY)) {
+        this.objectSelected = i;
+        this.updatePrevPos(event);
+        this.isTextDrag = true;
+        break;
+      }
+    }
   }
 
+  onClickUp(event): void {
+    this.isTextDrag = false;
+  }
+
+  onMouseMove(event): void {
+    if (this.isTextDrag) {
+      const positionX = event.offsetX;
+      const positionY = event.offsetY;
+
+      this.textList[this.objectSelected].x += positionX - this.mousePrevPosX;
+      this.textList[this.objectSelected].y += positionY - this.mousePrevPosY;
+
+      this.updatePrevPos(event);
+      this.render();
+    }
+  }
+
+  updatePrevPos(event): void {
+    this.mousePrevPosX = event.offsetX;
+    this.mousePrevPosY = event.offsetY;
+  }
 }
