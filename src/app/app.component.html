@@ -18,10 +18,17 @@
                          placeholder="height"
                          label="height"
                          (inputValue)="updateParametersValues()"></app-input-element>
+      <app-input-element title="title"
+                         fxFlex="100"
+                         formControlName="title"
+                         placeholder="title"
+                         label="title"
+                         (inputValue)="updateParametersValues()"></app-input-element>
 
     </form>
 
-    <canvas [width]="widthValue"
+    <canvas #bannerCanvas
+            [width]="widthValue"
             [height]="heightValue"></canvas>
   </div>
 
