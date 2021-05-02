@@ -3,6 +3,8 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 
 import {TextObject} from './draw-objects/text-object';
 import {drawText} from './draw-text';
+import {Background} from './backgrounds/background';
+import {MatrixBackground} from './backgrounds/matrix';
 
 @Component({
   selector: 'app-root',
@@ -23,6 +25,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   mousePrevPosX = null;
   mousePrevPosY = null;
   objectSelected = 0;
+
+  currentBackground: Background;
 
   form = new FormGroup({
     width: new FormControl('', [Validators.required]),
@@ -49,6 +53,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.form.controls.titleBackgroundColor.setValue('#f00');
     this.form.controls.titleTextColor.setValue('#000');
 
+    this.currentBackground = new MatrixBackground(this.DEFAULT_WIDTH, this.DEFAULT_HEIGHT);
+
     this.textList.push(new TextObject(
       this.DEFAULT_TITLE, 0, this.DEFAULT_HEIGHT, 30, '#000',
       '#f00', this.TITLE_PADDING, this.TITLE_RANDOM_PADDING));
@@ -66,13 +72,15 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.widthValue = this.form.controls.width.value || this.DEFAULT_WIDTH;
     this.heightValue = this.form.controls.height.value || this.DEFAULT_HEIGHT;
 
+    this.currentBackground = new MatrixBackground(this.widthValue, this.heightValue);
+
     this.render();
   }
 
   render(): void {
     this.cleanUpBoard();
-    this.drawBackground();
 
+    this.currentBackground.render(this.context);
     this.updateTextValue();
 
     for (const textObj of this.textList) {
@@ -89,62 +97,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   cleanUpBoard(): void {
     this.context.clearRect(0, 0, this.widthValue, this.heightValue);
-  }
-
-  drawBackground(): void {
-    this.context.fillStyle = '#000';
-    this.context.fillRect(0, 0, this.widthValue, this.heightValue);
-
-    const textColor = '#45ba49';
-    const textMainColor = '#85d98f';
-
-    const textSize = 8;
-    this.context.font = `${textSize}px Arial`;
-    const letterWidth = this.context.measureText('M').width;
-    const columnsPadding = 1;
-
-    const numberOfColumns = this.widthValue / (letterWidth + columnsPadding);
-    const maxNumberOfLetters = this.heightValue / textSize;
-    for (let i = 0; i < numberOfColumns; i++) {
-      // toDo 02.05.21: randomize this
-
-      const numberOfLetters = Math.ceil(Math.random() * maxNumberOfLetters);
-      for (let j = 0; j < numberOfLetters; j++) {
-        if (j + 1 < numberOfLetters) {
-          this.blurLetter((letterWidth + columnsPadding) * i, textSize * (j + 1), textColor, textSize, 2);
-        } else {
-          this.blurLetter((letterWidth + columnsPadding) * i, textSize * (j + 1), textMainColor, textSize, 4);
-        }
-      }
-    }
-
-    // random strings
-    for (let i = 0; i < 20; i++) {
-      const xPosition = Math.floor(Math.random() * numberOfColumns);
-      const yPosition = maxNumberOfLetters - Math.floor(Math.random() * 15);
-
-      for (let j = yPosition; j <= maxNumberOfLetters; j++) {
-        this.blurLetter((letterWidth + columnsPadding) * xPosition, textSize * (j + 1), textColor, textSize, 3);
-      }
-    }
-  }
-
-  blurLetter(x, y, color, size, intensity): void {
-    this.context.globalAlpha = 0.1;
-    const offset = 1;
-    for (let i = 0; i < intensity; i++) {
-      drawText(this.context, this.getRandomLetter(), color, x - offset, y - offset, size);
-      drawText(this.context, this.getRandomLetter(), color, x - offset, y + offset, size);
-      drawText(this.context, this.getRandomLetter(), color, x + offset, y - offset, size);
-      drawText(this.context, this.getRandomLetter(), color, x + offset, y + offset, size);
-    }
-    this.context.globalAlpha = 1;
-    drawText(this.context, this.getRandomLetter(), color, x, y, size);
-  }
-
-  getRandomLetter(): string {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    return characters[Math.floor(Math.random() * characters.length)];
   }
 
   onClickDown(event): void {
