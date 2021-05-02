@@ -7,22 +7,18 @@
        fxLayoutAlign="center center">
     <form [formGroup]="form"
           fxLayout="row wrap">
-      <div fxLayout="column">
-        <label for="width">width</label>
-        <input type="text"
-               id="width"
-               formControlName="width"
-               (keypress)="valueChange()"
-               placeholder="width">
-      </div>
-      <div fxLayout="column">
-        <label for="height">height</label>
-        <input type="text"
-               id="height"
-               formControlName="height"
-               (keypress)="valueChange()"
-               placeholder="height">
-      </div>
+
+      <app-input-element title="width"
+                         formControlName="width"
+                         placeholder="width"
+                         label="width"
+                         (inputValue)="updateParametersValues()"></app-input-element>
+      <app-input-element title="height"
+                         formControlName="height"
+                         placeholder="height"
+                         label="height"
+                         (inputValue)="updateParametersValues()"></app-input-element>
+
     </form>
 
     <canvas [width]="widthValue"
