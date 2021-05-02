@@ -6,6 +6,7 @@ import {drawText} from './draw-text';
 import {Background} from './backgrounds/background';
 import {MatrixBackground} from './backgrounds/matrix';
 import {Shape} from './draw-objects/shape';
+import {timer} from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -58,7 +59,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.currentBackground = new MatrixBackground(this.DEFAULT_WIDTH, this.DEFAULT_HEIGHT);
 
     this.objects.push(new TextObject(
-      this.DEFAULT_TITLE, 0, this.DEFAULT_HEIGHT, 30, '#000',
+      this.DEFAULT_TITLE, this.DEFAULT_WIDTH / 2, this.DEFAULT_HEIGHT / 2, 30, '#000',
       '#f00', this.TITLE_PADDING, this.TITLE_RANDOM_PADDING));
   }
 
@@ -71,17 +72,27 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   updateParametersValues(): void {
-    this.widthValue = this.form.controls.width.value || this.DEFAULT_WIDTH;
-    this.heightValue = this.form.controls.height.value || this.DEFAULT_HEIGHT;
+    this.widthValue = this.toIntWithDefault(this.form.controls.width.value, this.DEFAULT_WIDTH);
+    this.heightValue = this.toIntWithDefault(this.form.controls.height.value, this.DEFAULT_HEIGHT);
 
-    this.currentBackground = new MatrixBackground(this.widthValue, this.heightValue);
+    this.currentBackground.width = this.widthValue;
+    this.currentBackground.height = this.heightValue;
 
-    this.render();
+    timer(0).subscribe(() => {
+      this.currentBackground.render(this.context, true);
+      this.render();
+    });
+  }
+
+  toIntWithDefault(value: string, defaultValue: number): number {
+    try {
+      return Number.parseInt(value, 10);
+    } catch (ignore) {
+    }
+    return defaultValue;
   }
 
   render(): void {
-    this.cleanUpBoard();
-
     this.currentBackground.render(this.context);
     this.updateTextValue();
 

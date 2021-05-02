@@ -1,18 +1,20 @@
 import {drawText} from '../draw-text';
 import {Background} from './background';
 
-export class MatrixBackground implements Background {
+export class MatrixBackground extends Background {
 
   savedImage: ImageData = null;
 
   constructor(public width: number, public height: number) {
+    super(width, height);
   }
 
   render(context: CanvasRenderingContext2D, force?: boolean): void {
-    if (!!this.savedImage) {
+    if (!force && !!this.savedImage) {
       context.putImageData(this.savedImage, 0, 0);
       return;
     }
+    console.log('aa', this.width, this.height);
 
     context.fillStyle = '#000';
     context.fillRect(0, 0, this.width, this.height);
@@ -69,5 +71,9 @@ export class MatrixBackground implements Background {
   getRandomLetter(): string {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     return characters[Math.floor(Math.random() * characters.length)];
+  }
+
+  destroy(): void {
+    this.savedImage = null;
   }
 }
