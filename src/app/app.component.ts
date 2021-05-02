@@ -58,6 +58,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   render(): void {
     this.cleanUpBoard();
+    this.drawBackground();
     this.renderTitle();
   }
 
@@ -67,7 +68,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     const textSize = 30;
 
     this.context.font = `${textSize}px Arial`;
-
     const titleWidth = this.context.measureText(title).width;
     const titleHeight = textSize;
     const newTextPositionX = this.widthValue / 2 - titleWidth / 2;
@@ -77,7 +77,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.drawTitleContainer(newTextPositionX, newTextPositionY, titleWidth, titleHeight, titleBackgroundColor);
 
     const titleTextColor = this.form.controls.titleTextColor.value;
-    this.drawText(this.form.controls.title.value, titleTextColor, newTextPositionX, newTextPositionY);
+    this.drawText(this.form.controls.title.value, titleTextColor, newTextPositionX, newTextPositionY, textSize);
   }
 
   drawTitleContainer(initX: number, initY: number, width: number, height: number, color: string): void {
@@ -100,13 +100,71 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.context.fill();
   }
 
-  drawText(text: string, color: string, x: number, y: number): void {
-    this.context.fillStyle = color;
-    this.context.fillText(text, x, y);
-  }
-
   cleanUpBoard(): void {
     this.context.clearRect(0, 0, this.widthValue, this.heightValue);
+  }
+
+  drawBackground(): void {
+    this.context.fillStyle = '#000';
+    this.context.fillRect(0, 0, this.widthValue, this.heightValue);
+
+    const textColor = '#45ba49';
+    const textMainColor = '#85d98f';
+
+    const textSize = 8;
+    this.context.font = `${textSize}px Arial`;
+    const letterWidth = this.context.measureText('M').width;
+    const columnsPadding = 1;
+
+    const numberOfColumns = this.widthValue / (letterWidth + columnsPadding);
+    const maxNumberOfLetters = this.heightValue / textSize;
+    for (let i = 0; i < numberOfColumns; i++) {
+      // toDo 02.05.21: randomize this
+
+      const numberOfLetters = Math.ceil(Math.random() * maxNumberOfLetters);
+      for (let j = 0; j < numberOfLetters; j++) {
+        if (j + 1 < numberOfLetters) {
+          // this.drawText(this.getRandomLetter(), textColor, (letterWidth + columnsPadding) * i, textSize * (j + 1), textSize);
+          this.blurLetter((letterWidth + columnsPadding) * i, textSize * (j + 1), textColor, textSize, 2);
+        } else {
+          this.blurLetter((letterWidth + columnsPadding) * i, textSize * (j + 1), textMainColor, textSize, 4);
+        }
+      }
+    }
+
+    // random strings
+    for (let i = 0; i < 20; i++) {
+      const xPosition = Math.floor(Math.random() * numberOfColumns);
+      const yPosition = maxNumberOfLetters - Math.floor(Math.random() * 15);
+
+      for (let j = yPosition; j <= maxNumberOfLetters; j++) {
+        this.blurLetter((letterWidth + columnsPadding) * xPosition, textSize * (j + 1), textColor, textSize, 3);
+      }
+    }
+  }
+
+  blurLetter(x, y, color, size, intensity): void {
+    this.context.globalAlpha = 0.1;
+    const offset = 1;
+    for (let i = 0; i < intensity; i++) {
+      this.drawText(this.getRandomLetter(), color, x - offset, y - offset, size);
+      this.drawText(this.getRandomLetter(), color, x - offset, y + offset, size);
+      this.drawText(this.getRandomLetter(), color, x + offset, y - offset, size);
+      this.drawText(this.getRandomLetter(), color, x + offset, y + offset, size);
+    }
+    this.context.globalAlpha = 1;
+    this.drawText(this.getRandomLetter(), color, x, y, size);
+  }
+
+  getRandomLetter(): string {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    return characters[Math.floor(Math.random() * characters.length)];
+  }
+
+  drawText(text: string, color: string, x: number, y: number, textSize: number): void {
+    this.context.font = `${textSize}px Arial`;
+    this.context.fillStyle = color;
+    this.context.fillText(text, x, y);
   }
 
 }
