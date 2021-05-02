@@ -5,6 +5,7 @@ import {TextObject} from './draw-objects/text-object';
 import {drawText} from './draw-text';
 import {Background} from './backgrounds/background';
 import {MatrixBackground} from './backgrounds/matrix';
+import {Shape} from './draw-objects/shape';
 
 @Component({
   selector: 'app-root',
@@ -19,7 +20,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   TITLE_PADDING = 10;
   TITLE_RANDOM_PADDING = 20;
   DEFAULT_TITLE = 'Initial title';
-  textList: TextObject[] = [];
+
+  objects: Shape[] = [];
 
   isTextDrag = false;
   mousePrevPosX = null;
@@ -55,7 +57,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.currentBackground = new MatrixBackground(this.DEFAULT_WIDTH, this.DEFAULT_HEIGHT);
 
-    this.textList.push(new TextObject(
+    this.objects.push(new TextObject(
       this.DEFAULT_TITLE, 0, this.DEFAULT_HEIGHT, 30, '#000',
       '#f00', this.TITLE_PADDING, this.TITLE_RANDOM_PADDING));
   }
@@ -83,16 +85,16 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.currentBackground.render(this.context);
     this.updateTextValue();
 
-    for (const textObj of this.textList) {
+    for (const textObj of this.objects) {
       textObj.render(this.context);
     }
   }
 
   updateTextValue(): void {
     // toDo 02.05.21: at the moment is only one text
-    this.textList[0].text = this.form.controls.title.value;
-    this.textList[0].color = this.form.controls.titleTextColor.value;
-    this.textList[0].background = this.form.controls.titleBackgroundColor.value;
+    (this.objects[0] as TextObject).text = this.form.controls.title.value;
+    (this.objects[0] as TextObject).color = this.form.controls.titleTextColor.value;
+    (this.objects[0] as TextObject).background = this.form.controls.titleBackgroundColor.value;
   }
 
   cleanUpBoard(): void {
@@ -102,8 +104,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   onClickDown(event): void {
     const positionX = event.offsetX;
     const positionY = event.offsetY;
-    for (let i = 0; i < this.textList.length; i++) {
-      if (this.textList[i].insidePoint(positionX, positionY)) {
+    for (let i = 0; i < this.objects.length; i++) {
+      if (this.objects[i].insidePoint(positionX, positionY)) {
         this.objectSelected = i;
         this.updatePrevPos(event);
         this.isTextDrag = true;
@@ -121,8 +123,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       const positionX = event.offsetX;
       const positionY = event.offsetY;
 
-      this.textList[this.objectSelected].x += positionX - this.mousePrevPosX;
-      this.textList[this.objectSelected].y += positionY - this.mousePrevPosY;
+      this.objects[this.objectSelected].x += positionX - this.mousePrevPosX;
+      this.objects[this.objectSelected].y += positionY - this.mousePrevPosY;
 
       this.updatePrevPos(event);
       this.render();

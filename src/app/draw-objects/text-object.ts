@@ -1,9 +1,18 @@
 import {Shape} from './shape';
 import {drawText} from '../draw-text';
 
-export class TextObject implements Shape {
+export class TextObject extends Shape {
 
   shapePoints: Array<any> = [];
+
+  dx00: number;
+  dy00: number;
+  dx01: number;
+  dy01: number;
+  dx02: number;
+  dy02: number;
+  dx03: number;
+  dy03: number;
 
   constructor(
     public text: string,
@@ -15,6 +24,19 @@ export class TextObject implements Shape {
     public padding: number,
     public randomPadding: number
   ) {
+    super(x, y);
+    this.calculateOffset();
+  }
+
+  calculateOffset() {
+    this.dx00 = Math.random() * this.randomPadding;
+    this.dx01 = Math.random() * this.randomPadding;
+    this.dx02 = Math.random() * this.randomPadding;
+    this.dx03 = Math.random() * this.randomPadding;
+    this.dy00 = Math.random() * this.randomPadding;
+    this.dy01 = Math.random() * this.randomPadding;
+    this.dy02 = Math.random() * this.randomPadding;
+    this.dy03 = Math.random() * this.randomPadding;
   }
 
   insidePoint(x: number, y: number): boolean {
@@ -50,23 +72,18 @@ export class TextObject implements Shape {
     initX -= this.padding;
     initY += this.padding;
 
-    const dx00 = Math.random() * this.randomPadding, dx01 = Math.random() * this.randomPadding,
-      dx02 = Math.random() * this.randomPadding, dx03 = Math.random() * this.randomPadding;
-    const dy00 = Math.random() * this.randomPadding, dy01 = Math.random() * this.randomPadding,
-      dy02 = Math.random() * this.randomPadding, dy03 = Math.random() * this.randomPadding;
-
     this.shapePoints = [];
 
     context.beginPath();
-    context.moveTo(initX - dx00, initY + dy00);
-    context.lineTo(initX + width + this.padding * 2 + dx01, initY + dy01);
-    this.shapePoints.push({x: initX + width + this.padding * 2 + dx01, y: initY + dy01});
-    context.lineTo(initX + width + this.padding * 2 + dx02, initY - height - this.padding * 2 - dy02);
-    this.shapePoints.push({x: initX + width + this.padding * 2 + dx02, y: initY - height - this.padding * 2 - dy02});
-    context.lineTo(initX - dx03, initY - height - this.padding * 2 - dy03);
-    this.shapePoints.push({x: initX - dx03, y: initY - height - this.padding * 2 - dy03});
-    context.lineTo(initX - dx00, initY + dy00);
-    this.shapePoints.push({x: initX - dx00, y: initY + dy00});
+    context.moveTo(initX - this.dx00, initY + this.dy00);
+    context.lineTo(initX + width + this.padding * 2 + this.dx01, initY + this.dy01);
+    this.shapePoints.push({x: initX + width + this.padding * 2 + this.dx01, y: initY + this.dy01});
+    context.lineTo(initX + width + this.padding * 2 + this.dx02, initY - height - this.padding * 2 - this.dy02);
+    this.shapePoints.push({x: initX + width + this.padding * 2 + this.dx02, y: initY - height - this.padding * 2 - this.dy02});
+    context.lineTo(initX - this.dx03, initY - height - this.padding * 2 - this.dy03);
+    this.shapePoints.push({x: initX - this.dx03, y: initY - height - this.padding * 2 - this.dy03});
+    context.lineTo(initX - this.dx00, initY + this.dy00);
+    this.shapePoints.push({x: initX - this.dx00, y: initY + this.dy00});
     context.closePath();
     context.fillStyle = this.background;
     context.fill();
