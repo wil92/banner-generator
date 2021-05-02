@@ -25,6 +25,8 @@
                          label="title"
                          (inputValue)="updateParametersValues()"></app-input-element>
 
+      <app-color-picker formControlName="titleBackgroundColor"
+                        (colorChange)="render()"></app-color-picker>
     </form>
 
     <canvas #bannerCanvas
