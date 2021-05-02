@@ -26,6 +26,10 @@
                          (inputValue)="updateParametersValues()"></app-input-element>
 
       <app-color-picker formControlName="titleBackgroundColor"
+                        titleText="title background"
+                        (colorChange)="render()"></app-color-picker>
+      <app-color-picker formControlName="titleTextColor"
+                        titleText="title color"
                         (colorChange)="render()"></app-color-picker>
     </form>
 

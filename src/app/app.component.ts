@@ -21,6 +21,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     height: new FormControl('', [Validators.required]),
     title: new FormControl('', [Validators.required]),
     titleBackgroundColor: new FormControl('', [Validators.required]),
+    titleTextColor: new FormControl('', [Validators.required]),
   });
 
   widthValue = this.DEFAULT_WIDTH;
@@ -45,6 +46,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.form.controls.height.setValue(this.DEFAULT_HEIGHT);
     this.form.controls.title.setValue(this.DEFAULT_TITLE);
     this.form.controls.titleBackgroundColor.setValue('#f00');
+    this.form.controls.titleTextColor.setValue('#000');
   }
 
   updateParametersValues(): void {
@@ -74,7 +76,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     const titleBackgroundColor = this.form.controls.titleBackgroundColor.value;
     this.drawTitleContainer(newTextPositionX, newTextPositionY, titleWidth, titleHeight, titleBackgroundColor);
 
-    this.drawText(this.form.controls.title.value, '#000', newTextPositionX, newTextPositionY);
+    const titleTextColor = this.form.controls.titleTextColor.value;
+    this.drawText(this.form.controls.title.value, titleTextColor, newTextPositionX, newTextPositionY);
   }
 
   drawTitleContainer(initX: number, initY: number, width: number, height: number, color: string): void {
