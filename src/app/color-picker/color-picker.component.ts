@@ -16,6 +16,7 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 export class ColorPickerComponent implements OnInit, ControlValueAccessor {
 
   @Input() defaultColor = '#f00';
+  @Input() titleText = 'color';
   @Output() colorChange = new EventEmitter<void>();
 
   color: string;

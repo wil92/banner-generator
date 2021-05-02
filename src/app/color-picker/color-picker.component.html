@@ -1,3 +1,7 @@
-<input [(colorPicker)]="color"
-       (colorPickerChange)="onColorChange()"
-       [style.background]="color"/>
+<div fxLayout="column">
+  <label for="color">{{titleText}}</label>
+  <input id="color"
+         [(colorPicker)]="color"
+         (colorPickerChange)="onColorChange()"
+         [style.background]="color"/>
+</div>
