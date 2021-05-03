@@ -19,18 +19,25 @@
                          label="height"
                          (inputValue)="updateParametersValues()"></app-input-element>
 
-      <app-input-element title="title"
-                         fxFlex="100"
-                         formControlName="title"
-                         placeholder="title"
-                         label="title"
-                         (inputValue)="render()"></app-input-element>
-      <app-color-picker formControlName="titleBackgroundColor"
-                        titleText="title background"
-                        (colorChange)="render()"></app-color-picker>
-      <app-color-picker formControlName="titleTextColor"
-                        titleText="title color"
-                        (colorChange)="render()"></app-color-picker>
+      <ng-container formArrayName="texts">
+        <div *ngFor="let group of (texts?.controls || []); index as i"
+             [formGroup]="group"
+             fxFlex="100"
+             fxLayout="row wrap">
+          <app-input-element title="title"
+                             fxFlex="100"
+                             formControlName="title"
+                             placeholder="title"
+                             label="title"
+                             (inputValue)="renderText(i)"></app-input-element>
+          <app-color-picker formControlName="titleBackgroundColor"
+                            titleText="title background"
+                            (colorChange)="renderText(i)"></app-color-picker>
+          <app-color-picker formControlName="titleTextColor"
+                            titleText="title color"
+                            (colorChange)="renderText(i)"></app-color-picker>
+        </div>
+      </ng-container>
     </form>
 
     <canvas #bannerCanvas

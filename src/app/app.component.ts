@@ -1,12 +1,12 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+
+import {timer} from 'rxjs';
 
 import {TextObject} from './draw-objects/text-object';
-import {drawText} from './draw-text';
 import {Background} from './backgrounds/background';
 import {MatrixBackground} from './backgrounds/matrix';
 import {Shape} from './draw-objects/shape';
-import {timer} from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -34,10 +34,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   form = new FormGroup({
     width: new FormControl('', [Validators.required]),
     height: new FormControl('', [Validators.required]),
-    title: new FormControl('', [Validators.required]),
-    titleBackgroundColor: new FormControl('', [Validators.required]),
-    titleTextColor: new FormControl('', [Validators.required]),
+    texts: new FormArray([])
   });
+  texts: FormArray = this.form.get('texts') as FormArray;
 
   widthValue = this.DEFAULT_WIDTH;
   heightValue = this.DEFAULT_HEIGHT;
@@ -52,12 +51,24 @@ export class AppComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.form.controls.width.setValue(this.DEFAULT_WIDTH);
     this.form.controls.height.setValue(this.DEFAULT_HEIGHT);
-    this.form.controls.title.setValue(this.DEFAULT_TITLE);
-    this.form.controls.titleBackgroundColor.setValue('#f00');
-    this.form.controls.titleTextColor.setValue('#000');
+
+    this.createText();
+    this.createText();
 
     this.currentBackground = new MatrixBackground(this.DEFAULT_WIDTH, this.DEFAULT_HEIGHT);
+  }
 
+  createText(): void {
+    const group = new FormGroup({
+      title: new FormControl(''),
+      titleBackgroundColor: new FormControl(''),
+      titleTextColor: new FormControl(''),
+    });
+    group.get('title').setValue(this.DEFAULT_TITLE);
+    group.get('titleBackgroundColor').setValue('#f00');
+    group.get('titleTextColor').setValue('#000');
+
+    this.texts.push(group);
     this.objects.push(new TextObject(
       this.DEFAULT_TITLE, this.DEFAULT_WIDTH / 2, this.DEFAULT_HEIGHT / 2, 30, '#000',
       '#f00', this.TITLE_PADDING, this.TITLE_RANDOM_PADDING));
@@ -92,20 +103,24 @@ export class AppComponent implements OnInit, AfterViewInit {
     return defaultValue;
   }
 
+  renderText(index: number): void {
+    this.updateTextValue(index);
+    this.render();
+  }
+
+  updateTextValue(index: number): void {
+    (this.objects[index] as TextObject).text = this.texts.controls[index].get('title').value;
+    (this.objects[index] as TextObject).color = this.texts.controls[index].get('titleTextColor').value;
+    (this.objects[index] as TextObject).background =
+      this.texts.controls[index].get('titleBackgroundColor').value;
+  }
+
   render(): void {
     this.currentBackground.render(this.context);
-    this.updateTextValue();
 
     for (const textObj of this.objects) {
       textObj.render(this.context);
     }
-  }
-
-  updateTextValue(): void {
-    // toDo 02.05.21: at the moment is only one text
-    (this.objects[0] as TextObject).text = this.form.controls.title.value;
-    (this.objects[0] as TextObject).color = this.form.controls.titleTextColor.value;
-    (this.objects[0] as TextObject).background = this.form.controls.titleBackgroundColor.value;
   }
 
   cleanUpBoard(): void {

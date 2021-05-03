@@ -69,6 +69,10 @@ export class TextObject extends Shape {
   }
 
   drawTextContainer(context: CanvasRenderingContext2D, initX: number, initY: number, width: number, height: number): void {
+    if (!this.background) {
+      return;
+    }
+
     initX -= this.padding;
     initY += this.padding;
 
