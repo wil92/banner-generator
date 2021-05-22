@@ -17,6 +17,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   DEFAULT_WIDTH = 600;
   DEFAULT_HEIGHT = 275;
+  DEFAULT_MATRIX_FONT_SIZE = 8;
 
   TITLE_PADDING = 10;
   TITLE_RANDOM_PADDING = 20;
@@ -34,6 +35,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   form = new FormGroup({
     width: new FormControl('', [Validators.required]),
     height: new FormControl('', [Validators.required]),
+    matrixFontSize: new FormControl('', [Validators.required]),
     texts: new FormArray([])
   });
   texts: FormArray = this.form.get('texts') as FormArray;
@@ -51,8 +53,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.form.controls.width.setValue(this.DEFAULT_WIDTH);
     this.form.controls.height.setValue(this.DEFAULT_HEIGHT);
+    this.form.controls.matrixFontSize.setValue(this.DEFAULT_MATRIX_FONT_SIZE);
 
-    this.currentBackground = new MatrixBackground(this.DEFAULT_WIDTH, this.DEFAULT_HEIGHT);
+    this.currentBackground = new MatrixBackground(this.DEFAULT_WIDTH, this.DEFAULT_HEIGHT, this.DEFAULT_MATRIX_FONT_SIZE);
   }
 
   createText(): void {
@@ -68,23 +71,24 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     const INITIAL_TEXT_COLOR = '#fff';
     const INITIAL_TEXT_BACKGROUND_COLOR = '#ff000000';
-    const DEFAUL_TEXT_SIZE = 30
+    const DEFAULT_TEXT_SIZE = 30;
 
     group.get('title').setValue(this.DEFAULT_TITLE);
     group.get('titleBackgroundColor').setValue(INITIAL_TEXT_BACKGROUND_COLOR);
     group.get('titleTextColor').setValue(INITIAL_TEXT_COLOR);
     group.get('id').setValue(id);
-    group.get('titleSize').setValue(DEFAUL_TEXT_SIZE);
+    group.get('titleSize').setValue(DEFAULT_TEXT_SIZE);
 
     this.texts.push(group);
     this.objects.push(new TextObject(
-      this.DEFAULT_TITLE, id, this.DEFAULT_WIDTH / 2, this.DEFAULT_HEIGHT / 2, DEFAUL_TEXT_SIZE, INITIAL_TEXT_COLOR,
+      this.DEFAULT_TITLE, id, this.DEFAULT_WIDTH / 2, this.DEFAULT_HEIGHT / 2, DEFAULT_TEXT_SIZE, INITIAL_TEXT_COLOR,
       INITIAL_TEXT_BACKGROUND_COLOR, this.TITLE_PADDING, this.TITLE_RANDOM_PADDING));
 
     this.render();
   }
 
   refreshBackground(): void {
+    (this.currentBackground as MatrixBackground).textSize = +this.form.get('matrixFontSize').value;
     this.render(true);
   }
 

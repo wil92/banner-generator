@@ -27,6 +27,10 @@
                          placeholder="height"
                          label="height"
                          (inputValue)="updateParametersValues()"></app-input-element>
+      <input type="number"
+             (change)="refreshBackground()"
+             formControlName="matrixFontSize"
+             value="0">
 
       <button (click)="refreshBackground()">refresh background</button>
       <button (click)="createText()">New text</button>

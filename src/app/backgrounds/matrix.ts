@@ -5,7 +5,7 @@ export class MatrixBackground extends Background {
 
   savedImage: ImageData = null;
 
-  constructor(public width: number, public height: number) {
+  constructor(public width: number, public height: number, public textSize: number) {
     super(width, height);
   }
 
@@ -21,22 +21,21 @@ export class MatrixBackground extends Background {
     const textColor = '#45ba49';
     const textMainColor = '#85d98f';
 
-    const textSize = 8;
-    context.font = `${textSize}px Arial`;
+    context.font = `${this.textSize}px Arial`;
     const letterWidth = context.measureText('M').width;
     const columnsPadding = 1;
 
     const numberOfColumns = this.width / (letterWidth + columnsPadding);
-    const maxNumberOfLetters = this.height / textSize;
+    const maxNumberOfLetters = this.height / this.textSize;
     for (let i = 0; i < numberOfColumns; i++) {
       // toDo 02.05.21: randomize this
 
       const numberOfLetters = Math.ceil(Math.random() * maxNumberOfLetters);
       for (let j = 0; j < numberOfLetters; j++) {
         if (j + 1 < numberOfLetters) {
-          this.blurLetter(context, (letterWidth + columnsPadding) * i, textSize * (j + 1), textColor, textSize, 2);
+          this.blurLetter(context, (letterWidth + columnsPadding) * i, this.textSize * (j + 1), textColor, this.textSize, 2);
         } else {
-          this.blurLetter(context, (letterWidth + columnsPadding) * i, textSize * (j + 1), textMainColor, textSize, 4);
+          this.blurLetter(context, (letterWidth + columnsPadding) * i, this.textSize * (j + 1), textMainColor, this.textSize, 4);
         }
       }
     }
@@ -47,7 +46,7 @@ export class MatrixBackground extends Background {
       const yPosition = maxNumberOfLetters - Math.floor(Math.random() * 15);
 
       for (let j = yPosition; j <= maxNumberOfLetters; j++) {
-        this.blurLetter(context, (letterWidth + columnsPadding) * xPosition, textSize * (j + 1), textColor, textSize, 3);
+        this.blurLetter(context, (letterWidth + columnsPadding) * xPosition, this.textSize * (j + 1), textColor, this.textSize, 3);
       }
     }
 
