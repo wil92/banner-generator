@@ -58,18 +58,22 @@ export class TextObject extends Shape {
   }
 
   render(context: CanvasRenderingContext2D): void {
-    const title = this.text;
     const textSize = this.size;
 
+    const lines = this.text.split('\n');
+    const largeLine = lines.reduce((prev, line) => prev.length < line.length ? line : prev, '');
+
     context.font = `${textSize}px Arial`;
-    const titleWidth = context.measureText(title).width;
+    const titleWidth = context.measureText(largeLine).width;
     const titleHeight = textSize;
 
     const newTextPositionX = this.x;
     const newTextPositionY = this.y;
 
-    this.drawTextContainer(context, newTextPositionX, newTextPositionY, titleWidth, titleHeight);
-    drawText(context, this.text, this.color, newTextPositionX, newTextPositionY, textSize);
+    this.drawTextContainer(context, newTextPositionX, newTextPositionY, titleWidth, titleHeight * lines.length);
+    lines.forEach((line, index) => {
+      drawText(context, line, this.color, newTextPositionX, newTextPositionY - index * titleHeight, textSize);
+    });
   }
 
   drawTextContainer(context: CanvasRenderingContext2D, initX: number, initY: number, width: number, height: number): void {
@@ -78,7 +82,7 @@ export class TextObject extends Shape {
     }
 
     initX -= this.padding;
-    initY += this.padding;
+    initY += this.padding * 1.5;
 
     this.shapePoints = [];
 
