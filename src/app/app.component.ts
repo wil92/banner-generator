@@ -60,22 +60,25 @@ export class AppComponent implements OnInit, AfterViewInit {
       title: new FormControl(''),
       titleBackgroundColor: new FormControl(''),
       titleTextColor: new FormControl(''),
-      id: new FormControl('')
+      id: new FormControl(''),
+      titleSize: new FormControl('')
     });
 
     const id = this.randomId();
 
     const INITIAL_TEXT_COLOR = '#fff';
     const INITIAL_TEXT_BACKGROUND_COLOR = '#ff000000';
+    const DEFAUL_TEXT_SIZE = 30
 
     group.get('title').setValue(this.DEFAULT_TITLE);
     group.get('titleBackgroundColor').setValue(INITIAL_TEXT_BACKGROUND_COLOR);
     group.get('titleTextColor').setValue(INITIAL_TEXT_COLOR);
     group.get('id').setValue(id);
+    group.get('titleSize').setValue(DEFAUL_TEXT_SIZE);
 
     this.texts.push(group);
     this.objects.push(new TextObject(
-      this.DEFAULT_TITLE, id, this.DEFAULT_WIDTH / 2, this.DEFAULT_HEIGHT / 2, 30, INITIAL_TEXT_COLOR,
+      this.DEFAULT_TITLE, id, this.DEFAULT_WIDTH / 2, this.DEFAULT_HEIGHT / 2, DEFAUL_TEXT_SIZE, INITIAL_TEXT_COLOR,
       INITIAL_TEXT_BACKGROUND_COLOR, this.TITLE_PADDING, this.TITLE_RANDOM_PADDING));
 
     this.render();
@@ -102,6 +105,14 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.context = this.bannerCanvas.nativeElement.getContext('2d');
 
     // first render
+    this.render();
+  }
+
+  textSizeChange(size: number, id: string): void {
+    const textObj = this.objects.find(obj => obj.id === id);
+    if (textObj) {
+      (textObj as TextObject).size = +size;
+    }
     this.render();
   }
 
