@@ -72,10 +72,14 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.texts.push(group);
     this.objects.push(new TextObject(
-      this.DEFAULT_TITLE, id, this.DEFAULT_WIDTH / 2, this.DEFAULT_HEIGHT / 2, 30, '#000',
-      '#f00', this.TITLE_PADDING, this.TITLE_RANDOM_PADDING));
+      this.DEFAULT_TITLE, id, this.DEFAULT_WIDTH / 2, this.DEFAULT_HEIGHT / 2, 30, '#fff',
+      '#ff000000', this.TITLE_PADDING, this.TITLE_RANDOM_PADDING));
 
     this.render();
+  }
+
+  refreshBackground(): void {
+    this.render(true);
   }
 
   removeText(id: string): void {
@@ -131,8 +135,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.texts.controls[index].get('titleBackgroundColor').value;
   }
 
-  render(): void {
-    this.currentBackground.render(this.context);
+  render(force = false): void {
+    this.currentBackground.render(this.context, force);
 
     for (const textObj of this.objects) {
       textObj.render(this.context);

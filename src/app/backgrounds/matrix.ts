@@ -14,7 +14,6 @@ export class MatrixBackground extends Background {
       context.putImageData(this.savedImage, 0, 0);
       return;
     }
-    console.log('aa', this.width, this.height);
 
     context.fillStyle = '#000';
     context.fillRect(0, 0, this.width, this.height);

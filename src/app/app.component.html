@@ -19,6 +19,7 @@
                          label="height"
                          (inputValue)="updateParametersValues()"></app-input-element>
 
+      <button (click)="refreshBackground()">refresh background</button>
       <button (click)="createText()">New text</button>
 
       <ng-container formArrayName="texts">
