@@ -72,7 +72,7 @@ export class TextObject extends Shape {
 
     this.drawTextContainer(context, newTextPositionX, newTextPositionY, titleWidth, titleHeight * lines.length);
     lines.forEach((line, index) => {
-      drawText(context, line, this.color, newTextPositionX, newTextPositionY - index * titleHeight, textSize);
+      drawText(context, line, this.color, newTextPositionX, newTextPositionY - (lines.length - index - 1) * titleHeight, textSize);
     });
   }
 
@@ -82,20 +82,20 @@ export class TextObject extends Shape {
     }
 
     initX -= this.padding;
-    initY += this.padding * 1.5;
+    initY -= this.padding + height;
 
     this.shapePoints = [];
 
     context.beginPath();
-    context.moveTo(initX - this.dx00, initY + this.dy00);
-    context.lineTo(initX + width + this.padding * 2 + this.dx01, initY + this.dy01);
-    this.shapePoints.push({x: initX + width + this.padding * 2 + this.dx01, y: initY + this.dy01});
-    context.lineTo(initX + width + this.padding * 2 + this.dx02, initY - height - this.padding * 2 - this.dy02);
-    this.shapePoints.push({x: initX + width + this.padding * 2 + this.dx02, y: initY - height - this.padding * 2 - this.dy02});
-    context.lineTo(initX - this.dx03, initY - height - this.padding * 2 - this.dy03);
-    this.shapePoints.push({x: initX - this.dx03, y: initY - height - this.padding * 2 - this.dy03});
-    context.lineTo(initX - this.dx00, initY + this.dy00);
-    this.shapePoints.push({x: initX - this.dx00, y: initY + this.dy00});
+    context.moveTo(initX - this.dx00, initY - this.dy00);
+    context.lineTo(initX + width + this.padding * 2 + this.dx01, initY - this.dy01);
+    this.shapePoints.push({x: initX + width + this.padding * 2 + this.dx01, y: initY - this.dy01});
+    context.lineTo(initX + width + this.padding * 2 + this.dx02, initY + height + this.padding * 2 + this.dy02);
+    this.shapePoints.push({x: initX + width + this.padding * 2 + this.dx02, y: initY + height + this.padding * 2 + this.dy02});
+    context.lineTo(initX - this.dx03, initY + height + this.padding * 2 + this.dy03);
+    this.shapePoints.push({x: initX - this.dx03, y: initY + height + this.padding * 2 + this.dy03});
+    context.lineTo(initX - this.dx00, initY - this.dy00);
+    this.shapePoints.push({x: initX - this.dx00, y: initY - this.dy00});
     context.closePath();
     context.fillStyle = this.background;
     context.fill();
