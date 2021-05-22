@@ -65,15 +65,18 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     const id = this.randomId();
 
+    const INITIAL_TEXT_COLOR = '#fff';
+    const INITIAL_TEXT_BACKGROUND_COLOR = '#ff000000';
+
     group.get('title').setValue(this.DEFAULT_TITLE);
-    group.get('titleBackgroundColor').setValue('#f00');
-    group.get('titleTextColor').setValue('#000');
+    group.get('titleBackgroundColor').setValue(INITIAL_TEXT_BACKGROUND_COLOR);
+    group.get('titleTextColor').setValue(INITIAL_TEXT_COLOR);
     group.get('id').setValue(id);
 
     this.texts.push(group);
     this.objects.push(new TextObject(
-      this.DEFAULT_TITLE, id, this.DEFAULT_WIDTH / 2, this.DEFAULT_HEIGHT / 2, 30, '#fff',
-      '#ff000000', this.TITLE_PADDING, this.TITLE_RANDOM_PADDING));
+      this.DEFAULT_TITLE, id, this.DEFAULT_WIDTH / 2, this.DEFAULT_HEIGHT / 2, 30, INITIAL_TEXT_COLOR,
+      INITIAL_TEXT_BACKGROUND_COLOR, this.TITLE_PADDING, this.TITLE_RANDOM_PADDING));
 
     this.render();
   }
