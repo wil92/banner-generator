@@ -1,0 +1,8 @@
+<div fxLayout="column">
+  <label for="input">{{label}}</label>
+  <textarea type="text"
+            id="input"
+            (change)="valueChange()"
+            [(ngModel)]="value"
+            [placeholder]="placeholder"></textarea>
+</div>

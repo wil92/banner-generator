@@ -16,6 +16,7 @@ export class TextObject extends Shape {
 
   constructor(
     public text: string,
+    public id: string,
     public x: number,
     public y: number,
     public size: number,
@@ -24,11 +25,11 @@ export class TextObject extends Shape {
     public padding: number,
     public randomPadding: number
   ) {
-    super(x, y);
+    super(x, y, id);
     this.calculateOffset();
   }
 
-  calculateOffset() {
+  calculateOffset(): void {
     this.dx00 = Math.random() * this.randomPadding;
     this.dx01 = Math.random() * this.randomPadding;
     this.dx02 = Math.random() * this.randomPadding;
@@ -41,7 +42,10 @@ export class TextObject extends Shape {
 
   insidePoint(x: number, y: number): boolean {
     if (this.shapePoints.length > 0) {
-      let minX = this.shapePoints[0].x, minY = this.shapePoints[0].y, maxX = this.shapePoints[0].x, maxY = this.shapePoints[0].y;
+      let minX = this.shapePoints[0].x;
+      let minY = this.shapePoints[0].y;
+      let maxX = this.shapePoints[0].x;
+      let maxY = this.shapePoints[0].y;
       for (const point of this.shapePoints) {
         minX = Math.min(minX, point.x);
         maxX = Math.max(maxX, point.x);

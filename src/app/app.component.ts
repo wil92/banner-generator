@@ -52,9 +52,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.form.controls.width.setValue(this.DEFAULT_WIDTH);
     this.form.controls.height.setValue(this.DEFAULT_HEIGHT);
 
-    this.createText();
-    this.createText();
-
     this.currentBackground = new MatrixBackground(this.DEFAULT_WIDTH, this.DEFAULT_HEIGHT);
   }
 
@@ -63,15 +60,34 @@ export class AppComponent implements OnInit, AfterViewInit {
       title: new FormControl(''),
       titleBackgroundColor: new FormControl(''),
       titleTextColor: new FormControl(''),
+      id: new FormControl('')
     });
+
+    const id = this.randomId();
+
     group.get('title').setValue(this.DEFAULT_TITLE);
     group.get('titleBackgroundColor').setValue('#f00');
     group.get('titleTextColor').setValue('#000');
+    group.get('id').setValue(id);
 
     this.texts.push(group);
     this.objects.push(new TextObject(
-      this.DEFAULT_TITLE, this.DEFAULT_WIDTH / 2, this.DEFAULT_HEIGHT / 2, 30, '#000',
+      this.DEFAULT_TITLE, id, this.DEFAULT_WIDTH / 2, this.DEFAULT_HEIGHT / 2, 30, '#000',
       '#f00', this.TITLE_PADDING, this.TITLE_RANDOM_PADDING));
+
+    this.render();
+  }
+
+  removeText(id: string): void {
+    const index = this.texts.getRawValue().findIndex(v => v.id === id);
+    this.texts.removeAt(index);
+    this.objects = this.objects.filter(obj => obj.id !== id);
+
+    this.render();
+  }
+
+  randomId(): string {
+    return '_' + Math.random().toString(36).substr(2, 9);
   }
 
   ngAfterViewInit(): void {

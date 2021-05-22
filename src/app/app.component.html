@@ -19,23 +19,26 @@
                          label="height"
                          (inputValue)="updateParametersValues()"></app-input-element>
 
+      <button (click)="createText()">New text</button>
+
       <ng-container formArrayName="texts">
         <div *ngFor="let group of (texts?.controls || []); index as i"
              [formGroup]="group"
              fxFlex="100"
              fxLayout="row wrap">
-          <app-input-element title="title"
+          <app-textarea-element title="title"
                              fxFlex="100"
                              formControlName="title"
                              placeholder="title"
                              label="title"
-                             (inputValue)="renderText(i)"></app-input-element>
+                             (inputValue)="renderText(i)"></app-textarea-element>
           <app-color-picker formControlName="titleBackgroundColor"
                             titleText="title background"
                             (colorChange)="renderText(i)"></app-color-picker>
           <app-color-picker formControlName="titleTextColor"
                             titleText="title color"
                             (colorChange)="renderText(i)"></app-color-picker>
+          <button (click)="removeText(group.get('id').value)">remove</button>
         </div>
       </ng-container>
     </form>

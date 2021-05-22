@@ -8,6 +8,7 @@ import {ColorPickerModule} from 'ngx-color-picker';
 import {AppComponent} from './app.component';
 import {InputElementComponent} from './input-value/input-element.component';
 import { ColorPickerComponent } from './color-picker/color-picker.component';
+import {TextareaElementComponent} from './textarea-value/textarea-element.component';
 
 @NgModule({
   imports: [
@@ -20,6 +21,7 @@ import { ColorPickerComponent } from './color-picker/color-picker.component';
   declarations: [
     AppComponent,
     InputElementComponent,
+    TextareaElementComponent,
     ColorPickerComponent
   ],
   bootstrap: [AppComponent]
