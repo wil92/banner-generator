@@ -4,7 +4,16 @@
 
   <div class="content"
        fxLayout="column"
+       fxFlex="80"
        fxLayoutAlign="center center">
+
+    <canvas #bannerCanvas
+            (mousedown)="onClickDown($event)"
+            (mouseup)="onClickUp($event)"
+            (mousemove)="onMouseMove($event)"
+            [width]="widthValue"
+            [height]="heightValue"></canvas>
+
     <form [formGroup]="form"
           fxLayout="row wrap">
 
@@ -28,11 +37,11 @@
              fxFlex="100"
              fxLayout="row wrap">
           <app-textarea-element title="title"
-                             fxFlex="100"
-                             formControlName="title"
-                             placeholder="title"
-                             label="title"
-                             (inputValue)="renderText(i)"></app-textarea-element>
+                                fxFlex="100"
+                                formControlName="title"
+                                placeholder="title"
+                                label="title"
+                                (inputValue)="renderText(i)"></app-textarea-element>
           <app-color-picker formControlName="titleBackgroundColor"
                             titleText="title background"
                             (colorChange)="renderText(i)"></app-color-picker>
@@ -44,12 +53,6 @@
       </ng-container>
     </form>
 
-    <canvas #bannerCanvas
-            (mousedown)="onClickDown($event)"
-            (mouseup)="onClickUp($event)"
-            (mousemove)="onMouseMove($event)"
-            [width]="widthValue"
-            [height]="heightValue"></canvas>
   </div>
 
 </div>
